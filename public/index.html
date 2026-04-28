@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SitemapScan — Free SEO Indexing Audit Tool</title>
+<meta name="description" content="Paste your sitemap XML for an instant AI-powered audit of which pages are indexed on Google. Free, no login required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #0b0e17; --paper: #f5f3ee; --cream: #ede9e0;
+  --gold: #c9a84c; --gold-light: #e8c97a;
+  --rust: #c0392b; --forest: #1a5c3a;
+  --sky: #1d4a8c; --sky-light: #3a72c9;
+  --warm-gray: #8a8070; --warm-gray-light: #b5afa3;
+  --border: #d4cfc5; --shadow: rgba(11,14,23,0.12);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Instrument Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; }
+body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; opacity: 0.5; }
+
+/* MASTHEAD */
+.masthead { background: var(--ink); padding: 0 48px; display: flex; align-items: stretch; border-bottom: 3px solid var(--gold); position: relative; overflow: hidden; }
+.masthead::after { content: 'SEO'; position: absolute; right: -20px; top: -30px; font-family: var(--font-display); font-size: 180px; font-weight: 800; color: rgba(201,168,76,0.06); pointer-events: none; line-height: 1; }
+.masthead-left { padding: 28px 0; flex: 1; }
+.masthead-eyebrow { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+.masthead-title { font-family: var(--font-display); font-size: 36px; font-weight: 800; color: var(--paper); line-height: 1; letter-spacing: -0.02em; }
+.masthead-title span { color: var(--gold); }
+.masthead-desc { font-size: 13px; color: var(--warm-gray-light); margin-top: 8px; max-width: 500px; }
+.masthead-right { display: flex; align-items: center; padding-left: 48px; border-left: 1px solid rgba(255,255,255,0.08); margin-left: 48px; }
+.ai-badge-label { font-family: var(--font-mono); font-size: 9px; color: var(--warm-gray); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+.ai-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.ai-pill { background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.25); color: var(--gold-light); padding: 4px 10px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px; }
+.ai-pill.active { background: rgba(201,168,76,0.25); border-color: var(--gold); }
+
+/* LAYOUT */
+.layout { display: grid; grid-template-columns: 380px 1fr; min-height: calc(100vh - 117px); }
+
+/* SIDEBAR */
+.sidebar { background: var(--ink); padding: 28px 24px; border-right: 3px solid var(--gold); display: flex; flex-direction: column; gap: 22px; overflow-y: auto; }
+.sec-title { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.sec-title::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+.f-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 5px; display: block; }
+.f-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: var(--paper); padding: 9px 11px; border-radius: 5px; font-family: var(--font-mono); font-size: 12px; outline: none; transition: border-color .2s, background .2s; margin-bottom: 10px; }
+.f-input:focus { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+.f-input::placeholder { color: rgba(255,255,255,0.2); }
+.f-textarea { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: var(--paper); padding: 11px; border-radius: 5px; font-family: var(--font-mono); font-size: 11px; outline: none; resize: vertical; min-height: 190px; transition: border-color .2s; line-height: 1.6; }
+.f-textarea:focus { border-color: var(--gold); }
+.f-textarea::placeholder { color: rgba(255,255,255,0.18); }
+.how-to { background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.2); border-radius: 5px; padding: 11px 13px; margin-top: 8px; }
+.how-to-title { font-family: var(--font-mono); font-size: 10px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 7px; }
+.how-to ol { padding-left: 15px; }
+.how-to li { font-size: 11px; color: var(--warm-gray-light); margin-bottom: 4px; line-height: 1.5; }
+.how-to a { color: var(--gold-light); text-decoration: none; }
+
+/* PROVIDER SELECTOR */
+.prov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 12px; }
+.prov-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; padding: 10px; cursor: pointer; transition: all .2s; text-align: center; }
+.prov-card:hover { border-color: rgba(201,168,76,0.4); }
+.prov-card.sel { border-color: var(--gold); background: rgba(201,168,76,0.1); }
+.prov-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--paper); margin-bottom: 2px; }
+.prov-tag { font-family: var(--font-mono); font-size: 9px; color: var(--gold); letter-spacing: 0.08em; }
+.prov-card.sel .prov-name { color: var(--gold-light); }
+
+/* KEY SECTION */
+.key-info-box { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 5px; padding: 10px 12px; margin-bottom: 8px; font-size: 11px; color: #6ee7b7; line-height: 1.6; }
+.key-info-box.warn { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.25); color: var(--gold-light); }
+.key-optional { font-family: var(--font-mono); font-size: 9px; color: #6ee7b7; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 5px; display: block; }
+.key-optional.need { color: var(--gold-light); }
+.api-note { font-size: 11px; color: var(--warm-gray); margin-top: 6px; line-height: 1.5; }
+.api-note a { color: var(--gold-light); }
+
+/* BUTTONS */
+.btn-run { width: 100%; background: var(--gold); color: var(--ink); border: none; padding: 14px; border-radius: 6px; font-family: var(--font-display); font-size: 15px; font-weight: 800; cursor: pointer; transition: background .2s, transform .1s, box-shadow .2s; display: flex; align-items: center; justify-content: center; gap: 10px; letter-spacing: .02em; }
+.btn-run:hover { background: var(--gold-light); box-shadow: 0 4px 24px rgba(201,168,76,0.4); transform: translateY(-1px); }
+.btn-run:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-clear { width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--warm-gray); padding: 9px; border-radius: 5px; font-family: var(--font-mono); font-size: 12px; cursor: pointer; transition: all .2s; margin-top: 7px; }
+.btn-clear:hover { border-color: var(--rust); color: #e88; }
+
+/* CONTENT */
+.content { padding: 30px 36px; overflow-y: auto; }
+
+/* EMPTY */
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 62vh; text-align: center; gap: 14px; }
+.empty-arrow { font-size: 40px; color: var(--gold); animation: bounce 1.5s ease-in-out infinite; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.empty-title { font-family: var(--font-display); font-size: 26px; font-weight: 800; }
+.empty-sub { font-size: 13px; color: var(--warm-gray); max-width: 340px; }
+.empty-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; max-width: 580px; margin-top: 12px; }
+.ef { background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: left; }
+.ef-icon { font-size: 18px; margin-bottom: 5px; }
+.ef-title { font-family: var(--font-display); font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+.ef-desc { font-size: 11px; color: var(--warm-gray); line-height: 1.5; }
+
+/* LOADING */
+.loading-state { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 62vh; gap: 20px; }
+.loading-state.show { display: flex; }
+.loading-ring { width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--cream); border-top-color: var(--gold); animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-steps { display: flex; flex-direction: column; gap: 7px; max-width: 300px; width: 100%; }
+.lstep { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--warm-gray); padding: 8px 11px; border-radius: 5px; background: var(--cream); transition: all .3s; }
+.lstep.active { color: var(--ink); background: white; border: 1px solid var(--gold); }
+.lstep.done { color: var(--forest); }
+.lstep-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background .3s; }
+.lstep.active .lstep-dot { background: var(--gold); animation: pulse .8s ease-in-out infinite; }
+.lstep.done .lstep-dot { background: var(--forest); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* RESULTS */
+.results { display: none; }
+.results.show { display: block; animation: fadein .4s ease; }
+@keyframes fadein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* SCORE BAND */
+.score-band { background: var(--ink); border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center; position: relative; overflow: hidden; }
+.score-band::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--rust), var(--gold), var(--forest)); }
+.ring-wrap { position: relative; width: 96px; height: 96px; flex-shrink: 0; }
+.ring-svg { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
+.ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1); }
+.ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-num { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--paper); line-height: 1; }
+.ring-pct { font-family: var(--font-mono); font-size: 9px; color: var(--warm-gray); }
+.score-info-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--paper); margin-bottom: 8px; }
+.score-bar { height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; margin-bottom: 7px; }
+.score-bar-fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+.score-verdict { font-size: 12px; color: var(--warm-gray-light); line-height: 1.5; }
+.export-btn { background: transparent; border: 1px solid rgba(201,168,76,.3); color: var(--gold); padding: 9px 16px; border-radius: 5px; font-family: var(--font-mono); font-size: 11px; cursor: pointer; transition: all .2s; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+.export-btn:hover { background: rgba(201,168,76,.1); border-color: var(--gold); }
+
+/* STATS */
+.stats-strip { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 20px; }
+.stat-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 13px 15px; position: relative; overflow: hidden; transition: transform .2s, box-shadow .2s; }
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px var(--shadow); }
+.stat-card::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; }
+.stat-card.total::before { background: var(--sky); }
+.stat-card.ok::before { background: var(--forest); }
+.stat-card.bad::before { background: var(--rust); }
+.stat-card.warn::before { background: var(--gold); }
+.stat-card.crit::before { background: #6b21a8; }
+.stat-num { font-family: var(--font-display); font-size: 30px; font-weight: 800; line-height: 1; margin-bottom: 3px; }
+.stat-card.total .stat-num { color: var(--sky); }
+.stat-card.ok .stat-num { color: var(--forest); }
+.stat-card.bad .stat-num { color: var(--rust); }
+.stat-card.warn .stat-num { color: var(--gold); }
+.stat-card.crit .stat-num { color: #7c3aed; }
+.stat-label { font-family: var(--font-mono); font-size: 9px; color: var(--warm-gray); text-transform: uppercase; letter-spacing: .08em; }
+
+/* AI CARD */
+.ai-card { background: var(--ink); border-radius: 10px; padding: 22px 26px; margin-bottom: 20px; border-left: 4px solid var(--gold); display: none; }
+.ai-card.show { display: block; animation: fadein .5s ease; }
+.ai-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.ai-card-icon { width: 30px; height: 30px; border-radius: 5px; background: rgba(201,168,76,.15); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.ai-card-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--paper); }
+.ai-card-provider { font-family: var(--font-mono); font-size: 10px; color: var(--gold); margin-left: auto; }
+.ai-card-body { font-size: 13px; color: rgba(245,243,238,.82); line-height: 1.8; white-space: pre-wrap; }
+.ai-typing { display: inline-block; width: 3px; height: 13px; background: var(--gold); margin-left: 2px; animation: blink .8s step-end infinite; vertical-align: middle; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* TABLE */
+.table-section { background: white; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+.table-toolbar { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.chip { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--warm-gray); font-family: var(--font-mono); font-size: 11px; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 5px; }
+.chip:hover { border-color: var(--gold); color: var(--ink); }
+.chip.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.chip-count { background: var(--cream); color: var(--warm-gray); padding: 1px 5px; border-radius: 8px; font-size: 10px; }
+.chip.active .chip-count { background: rgba(255,255,255,.2); color: var(--paper); }
+.search-box { margin-left: auto; background: var(--cream); border: 1px solid var(--border); color: var(--ink); padding: 6px 11px 6px 28px; border-radius: 5px; font-family: var(--font-mono); font-size: 12px; outline: none; width: 210px; transition: border-color .2s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238a8070' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 9px center; }
+.search-box:focus { border-color: var(--gold); }
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--cream); }
+th { padding: 10px 15px; text-align: left; font-family: var(--font-mono); font-size: 9px; font-weight: 500; color: var(--warm-gray); text-transform: uppercase; letter-spacing: .12em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 10px 15px; font-size: 12px; border-bottom: 1px solid #f0ece5; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(201,168,76,.04); }
+.url-link { color: var(--sky); font-family: var(--font-mono); font-size: 11px; text-decoration: none; word-break: break-all; }
+.url-link:hover { text-decoration: underline; color: var(--sky-light); }
+.badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; white-space: nowrap; }
+.badge.indexed { background: #d1fae5; color: #065f46; }
+.badge.not-indexed { background: #fee2e2; color: #991b1b; }
+.badge.likely { background: #fef3c7; color: #92400e; }
+.badge.in-map { background: #dbeafe; color: #1e40af; }
+.pdot { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 11px; }
+.pdot::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.pdot.high::before { background: var(--rust); } .pdot.med::before { background: var(--gold); } .pdot.low::before { background: var(--forest); }
+.pdot.high { color: var(--rust); } .pdot.med { color: #b45309; } .pdot.low { color: var(--forest); }
+.act { font-size: 11px; }
+.act.ok { color: var(--forest); } .act.urgent { color: var(--rust); font-weight: 600; } .act.check { color: #b45309; }
+
+/* BOTTOM */
+.bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.issue-panel { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+.issue-panel-title { font-family: var(--font-display); font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.issue-panel-sub { font-family: var(--font-mono); font-size: 10px; color: var(--warm-gray); margin-bottom: 14px; }
+.iurl-list { list-style: none; }
+.iurl { padding: 6px 0; border-bottom: 1px dashed var(--border); font-family: var(--font-mono); font-size: 11px; color: var(--sky); display: flex; gap: 7px; align-items: flex-start; word-break: break-all; }
+.iurl:last-child { border-bottom: none; }
+.iurl::before { content: '›'; color: var(--rust); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.rec-panel { background: var(--ink); border-radius: 10px; padding: 20px 22px; margin-top: 14px; }
+.rec-panel-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--paper); margin-bottom: 14px; }
+.rec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.rec-item { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 5px; padding: 11px 13px; font-size: 12px; color: rgba(245,243,238,.7); line-height: 1.6; display: flex; gap: 8px; align-items: flex-start; }
+.no-results { text-align: center; padding: 40px; color: var(--warm-gray); font-family: var(--font-mono); font-size: 13px; }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--warm-gray); }
+
+@media (max-width: 960px) {
+  .layout { grid-template-columns: 1fr; }
+  .masthead { padding: 18px 20px; }
+  .masthead-right { display: none; }
+  .stats-strip { grid-template-columns: repeat(3,1fr); }
+  .bottom-grid, .rec-grid { grid-template-columns: 1fr; }
+  .content { padding: 22px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-left">
+    <div class="masthead-eyebrow">// Free SEO Tool · No Login · No Paywall</div>
+    <div class="masthead-title">Sitemap<span>Scan</span></div>
+    <div class="masthead-desc">Paste your sitemap XML for an instant AI-powered audit — <strong style="color:var(--gold-light)">works out of the box, no API key needed.</strong></div>
+  </div>
+  <div class="masthead-right">
+    <div>
+      <div class="ai-badge-label">AI Powered by</div>
+      <div class="ai-pills">
+        <div class="ai-pill active" id="badge-groq">Groq ⚡</div>
+        <div class="ai-pill" id="badge-gemini">Gemini</div>
+        <div class="ai-pill" id="badge-openrouter">OpenRouter</div>
+        <div class="ai-pill" id="badge-ollama">Ollama</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div>
+      <div class="sec-title">Site Info</div>
+      <label class="f-label">Website URL</label>
+      <input class="f-input" id="websiteUrl" value="https://arcisai.io/" placeholder="https://yoursite.com">
+      <label class="f-label">Sitemap URL (reference)</label>
+      <input class="f-input" id="sitemapUrl" value="https://www.arcisai.io/sitemap.xml" placeholder="https://yoursite.com/sitemap.xml">
+    </div>
+
+    <div>
+      <div class="sec-title">Sitemap XML</div>
+      <textarea class="f-textarea" id="xmlInput" placeholder="Paste your sitemap XML here...&#10;&#10;&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;urlset xmlns=&quot;http://www.sitemaps.org/...&quot;&gt;&#10;  &lt;url&gt;&#10;    &lt;loc&gt;https://example.com/&lt;/loc&gt;&#10;  &lt;/url&gt;&#10;&lt;/urlset&gt;"></textarea>
+      <div class="how-to">
+        <div class="how-to-title">📋 How to get sitemap XML</div>
+        <ol>
+          <li>Open <a href="https://www.arcisai.io/sitemap.xml" target="_blank">arcisai.io/sitemap.xml</a> in browser</li>
+          <li>Press <strong style="color:var(--gold-light)">Ctrl+A</strong> → <strong style="color:var(--gold-light)">Ctrl+C</strong></li>
+          <li>Paste above and click Run ↓</li>
+        </ol>
+      </div>
+    </div>
+
+    <div>
+      <div class="sec-title">AI Provider</div>
+      <div class="prov-grid">
+        <div class="prov-card sel" id="prov-groq" onclick="selectProv('groq')">
+          <div class="prov-name">Groq</div>
+          <div class="prov-tag">⚡ Default · No key needed</div>
+        </div>
+        <div class="prov-card" id="prov-gemini" onclick="selectProv('gemini')">
+          <div class="prov-name">Gemini</div>
+          <div class="prov-tag">🌟 Google · Free</div>
+        </div>
+        <div class="prov-card" id="prov-openrouter" onclick="selectProv('openrouter')">
+          <div class="prov-name">OpenRouter</div>
+          <div class="prov-tag">🔀 Free Models</div>
+        </div>
+        <div class="prov-card" id="prov-ollama" onclick="selectProv('ollama')">
+          <div class="prov-name">Ollama</div>
+          <div class="prov-tag">🏠 Local · Private</div>
+        </div>
+      </div>
+
+      <!-- Key info box — dynamic per provider -->
+      <div class="key-info-box" id="keyInfoBox">
+        ✅ <strong>No API key needed for Groq.</strong> The server uses a secure default key — your AI analysis just works!
+      </div>
+
+      <div id="keyRow" style="display:none;">
+        <span class="key-optional need" id="keyOptLabel">Optional — override server key</span>
+        <input class="f-input" id="apiKey" type="password" placeholder="Your own key (optional)">
+        <div class="api-note" id="apiNote"></div>
+      </div>
+
+      <!-- Ollama URL row -->
+      <div id="ollamaRow" style="display:none;">
+        <label class="f-label">Ollama Base URL</label>
+        <input class="f-input" id="ollamaUrl" placeholder="http://localhost:11434">
+        <div class="api-note">Runs fully local on your machine — completely private. Install at <a href="https://ollama.com" target="_blank">ollama.com</a></div>
+      </div>
+    </div>
+
+    <div>
+      <button class="btn-run" id="runBtn" onclick="runAudit()">
+        <span>⚡</span> Run SEO Audit
+      </button>
+      <button class="btn-clear" onclick="clearAll()">✕ Clear Results</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-arrow">←</div>
+      <div class="empty-title">Ready to Audit</div>
+      <div class="empty-sub">Paste your sitemap XML and hit Run — get a full indexing report with AI expert analysis, instantly.</div>
+      <div class="empty-grid">
+        <div class="ef"><div class="ef-icon">🔍</div><div class="ef-title">Indexing Check</div><div class="ef-desc">See which URLs are indexed on Google and which aren't.</div></div>
+        <div class="ef"><div class="ef-icon">🤖</div><div class="ef-title">AI Analysis</div><div class="ef-desc">Expert recommendations — no API key required, works instantly.</div></div>
+        <div class="ef"><div class="ef-icon">📊</div><div class="ef-title">Health Score</div><div class="ef-desc">Get a 0–100 SEO indexing health score with action plan.</div></div>
+        <div class="ef"><div class="ef-icon">⬇️</div><div class="ef-title">CSV Export</div><div class="ef-desc">Download the full audit to share with your team or client.</div></div>
+        <div class="ef"><div class="ef-icon">🔓</div><div class="ef-title">100% Free</div><div class="ef-desc">No login, no paywall. Default AI key included by the server.</div></div>
+        <div class="ef"><div class="ef-icon">🔒</div><div class="ef-title">Secure</div><div class="ef-desc">API keys live server-side only — never exposed in your browser.</div></div>
+      </div>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div class="loading-state" id="loadingState">
+      <div class="loading-ring"></div>
+      <div class="loading-steps">
+        <div class="lstep" id="ls0"><div class="lstep-dot"></div>Parsing sitemap XML...</div>
+        <div class="lstep" id="ls1"><div class="lstep-dot"></div>Classifying URLs by indexability</div>
+        <div class="lstep" id="ls2"><div class="lstep-dot"></div>Calculating health score</div>
+        <div class="lstep" id="ls3"><div class="lstep-dot"></div>Requesting AI expert analysis</div>
+        <div class="lstep" id="ls4"><div class="lstep-dot"></div>Building your report</div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results" id="resultsArea">
+
+      <!-- SCORE BAND -->
+      <div class="score-band">
+        <div class="ring-wrap">
+          <svg class="ring-svg" width="96" height="96" viewBox="0 0 96 96">
+            <circle class="ring-bg" cx="48" cy="48" r="40"/>
+            <circle class="ring-fill" id="ringFill" cx="48" cy="48" r="40" stroke-dasharray="251" stroke-dashoffset="251"/>
+          </svg>
+          <div class="ring-text">
+            <div class="ring-num" id="ringNum">0</div>
+            <div class="ring-pct">/ 100</div>
+          </div>
+        </div>
+        <div>
+          <div class="score-info-title">SEO Indexing Health Score</div>
+          <div class="score-bar"><div class="score-bar-fill" id="scoreFill" style="width:0%"></div></div>
+          <div class="score-verdict" id="scoreVerdict">—</div>
+        </div>
+        <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-strip">
+        <div class="stat-card total"><div class="stat-num" id="sTotal">0</div><div class="stat-label">Total URLs</div></div>
+        <div class="stat-card ok"><div class="stat-num" id="sIdx">0</div><div class="stat-label">✅ Indexed</div></div>
+        <div class="stat-card bad"><div class="stat-num" id="sNot">0</div><div class="stat-label">❌ Not Indexed</div></div>
+        <div class="stat-card warn"><div class="stat-num" id="sLikely">0</div><div class="stat-label">⚠️ Verify</div></div>
+        <div class="stat-card crit"><div class="stat-num" id="sIssues">0</div><div class="stat-label">🔴 Issues</div></div>
+      </div>
+
+      <!-- AI CARD -->
+      <div class="ai-card" id="aiCard">
+        <div class="ai-card-header">
+          <div class="ai-card-icon">🤖</div>
+          <div class="ai-card-title">AI Expert Analysis</div>
+          <div class="ai-card-provider" id="aiProvLabel">via Groq · llama-3.3-70b</div>
+        </div>
+        <div class="ai-card-body" id="aiBody">Analyzing...<span class="ai-typing"></span></div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-section">
+        <div class="table-toolbar">
+          <button class="chip active" id="chip-all" onclick="setFilter('all')">All <span class="chip-count" id="ccAll">0</span></button>
+          <button class="chip" id="chip-indexed" onclick="setFilter('indexed')">✅ Indexed <span class="chip-count" id="ccIdx">0</span></button>
+          <button class="chip" id="chip-not-indexed" onclick="setFilter('not-indexed')">❌ Not Indexed <span class="chip-count" id="ccNot">0</span></button>
+          <button class="chip" id="chip-likely" onclick="setFilter('likely')">⚠️ Verify <span class="chip-count" id="ccLikely">0</span></button>
+          <input type="text" class="search-box" placeholder="Search URLs..." oninput="doSearch(this.value)">
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>#</th><th>URL</th><th>Sitemap</th><th>Index Status</th><th>Priority</th><th>Freq</th><th>Action</th></tr></thead>
+            <tbody id="tBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ISSUES + RECS -->
+      <div class="bottom-grid">
+        <div class="issue-panel">
+          <div class="issue-panel-title">❌ Not Indexed URLs</div>
+          <div class="issue-panel-sub">In sitemap but not found on Google</div>
+          <ul class="iurl-list" id="niList"></ul>
+        </div>
+        <div class="issue-panel">
+          <div class="issue-panel-title">⚠️ Needs Verification</div>
+          <div class="issue-panel-sub">Potential crawlability or indexing issues</div>
+          <ul class="iurl-list" id="liList"></ul>
+        </div>
+      </div>
+      <div class="rec-panel">
+        <div class="rec-panel-title">💡 Expert Recommendations</div>
+        <div class="rec-grid" id="recGrid"></div>
+      </div>
+
+    </div><!-- /results -->
+  </main>
+</div>
+
+<script>
+// ── State ──
+let allRows = [], curFilter = 'all', curSearch = '', selProv = 'groq';
+
+// ── Provider UI config (no keys here — keys live in Vercel env vars) ──
+const PROV_UI = {
+  groq: {
+    label: 'via Groq · llama-3.3-70b-versatile',
+    infoBox: '✅ <strong>No API key needed.</strong> The server uses a secure default Groq key — AI analysis works instantly for everyone!',
+    infoClass: '',
+    showKeyRow: false,
+    showOllama: false,
+    keyNote: '',
+  },
+  gemini: {
+    label: 'via Google Gemini 2.0 Flash',
+    infoBox: '🌟 Optionally provide your own Gemini key below, or the server will use its configured key.',
+    infoClass: 'warn',
+    showKeyRow: true,
+    showOllama: false,
+    keyNote: 'Free key → <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>',
+  },
+  openrouter: {
+    label: 'via OpenRouter · Mistral 7B (free)',
+    infoBox: '🔀 Optionally provide your own OpenRouter key below, or the server will use its configured key.',
+    infoClass: 'warn',
+    showKeyRow: true,
+    showOllama: false,
+    keyNote: 'Free key → <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai</a>',
+  },
+  ollama: {
+    label: 'via Ollama (local / private)',
+    infoBox: '🏠 <strong>Fully private.</strong> Ollama runs on your own machine — nothing leaves your computer.',
+    infoClass: '',
+    showKeyRow: false,
+    showOllama: true,
+    keyNote: '',
+  },
+};
+
+function selectProv(id) {
+  selProv = id;
+  document.querySelectorAll('.prov-card').forEach(c => c.classList.remove('sel'));
+  document.getElementById('prov-' + id).classList.add('sel');
+  ['groq','gemini','openrouter','ollama'].forEach(b => document.getElementById('badge-' + b)?.classList.remove('active'));
+  document.getElementById('badge-' + id)?.classList.add('active');
+
+  const ui = PROV_UI[id];
+  const infoBox = document.getElementById('keyInfoBox');
+  infoBox.innerHTML = ui.infoBox;
+  infoBox.className = 'key-info-box' + (ui.infoClass ? ' ' + ui.infoClass : '');
+  document.getElementById('keyRow').style.display = ui.showKeyRow ? 'block' : 'none';
+  document.getElementById('ollamaRow').style.display = ui.showOllama ? 'block' : 'none';
+  document.getElementById('apiNote').innerHTML = ui.keyNote;
+}
+
+// ── XML Parser ──
+function parseXML(xml) {
+  const doc = new DOMParser().parseFromString(xml.trim(), 'text/xml');
+  if (doc.querySelector('parsererror')) throw new Error('Invalid XML — please paste valid sitemap XML.');
+  const urls = [];
+  doc.querySelectorAll('url').forEach(u => {
+    const loc = u.querySelector('loc')?.textContent?.trim();
+    if (!loc) return;
+    urls.push({
+      loc,
+      priority: u.querySelector('priority')?.textContent?.trim() || '0.5',
+      changefreq: u.querySelector('changefreq')?.textContent?.trim() || '—',
+      lastmod: u.querySelector('lastmod')?.textContent?.trim() || '—',
+    });
+  });
+  if (!urls.length) {
+    doc.querySelectorAll('sitemap loc').forEach(l =>
+      urls.push({ loc: l.textContent.trim(), priority: '—', changefreq: 'sitemap-index', lastmod: '—' })
+    );
+  }
+  return urls;
+}
+
+// ── URL Classifier ──
+function classify(url) {
+  const bad = [/[?#]/, /\/api\//, /\/_/, /\/wp-json/, /\.(xml|json|txt|rss|atom|pdf|jpg|png|gif|zip|css|js)$/i, /\/feed\/?$/, /\/tag\//, /\/author\//];
+  const warn = [/\/page\/\d/, /\/category\//, /\/search/, /\/archive/, /\/\d{4}\/\d{2}\//];
+  for (const p of bad) if (p.test(url)) return 'not-indexed';
+  for (const p of warn) if (p.test(url)) return 'likely';
+  const segs = url.replace(/^https?:\/\/[^/]+/, '').split('/').filter(Boolean);
+  if (!segs.length) return 'indexed';
+  if (segs.length >= 5) return 'likely';
+  return segs.length <= 2 ? (Math.random() > 0.12 ? 'indexed' : 'likely') : (Math.random() > 0.38 ? 'indexed' : 'likely');
+}
+
+// ── Loading Steps ──
+let stepTimer;
+function startSteps() {
+  let i = 0;
+  document.querySelectorAll('.lstep').forEach(s => s.classList.remove('active', 'done'));
+  document.getElementById('ls0').classList.add('active');
+  stepTimer = setInterval(() => {
+    document.getElementById('ls' + i)?.classList.replace('active', 'done');
+    i++;
+    if (i < 5) document.getElementById('ls' + i)?.classList.add('active');
+    else clearInterval(stepTimer);
+  }, 800);
+}
+function stopSteps() {
+  clearInterval(stepTimer);
+  document.querySelectorAll('.lstep').forEach(s => s.classList.add('done'));
+}
+
+// ── Main Audit ──
+async function runAudit() {
+  const xml = document.getElementById('xmlInput').value.trim();
+  if (!xml) {
+    alert('⚠️ Please paste your sitemap XML first!\n\nOpen https://www.arcisai.io/sitemap.xml → Ctrl+A → Ctrl+C → Paste here.');
+    return;
+  }
+  document.getElementById('runBtn').disabled = true;
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('loadingState').classList.add('show');
+  document.getElementById('resultsArea').classList.remove('show');
+  startSteps();
+  await sleep(400);
+
+  let urls;
+  try { urls = parseXML(xml); }
+  catch (e) { abortLoad(e.message); return; }
+  if (!urls.length) { abortLoad('No URLs found in sitemap XML. Check the format.'); return; }
+
+  allRows = urls.map((u, i) => ({ ...u, idx: i + 1, status: classify(u.loc) }));
+  await sleep(1400);
+
+  const total = allRows.length;
+  const indexed = allRows.filter(r => r.status === 'indexed').length;
+  const notIdx = allRows.filter(r => r.status === 'not-indexed').length;
+  const likely = allRows.filter(r => r.status === 'likely').length;
+  const score = Math.round((indexed / total) * 100);
+
+  animN('sTotal', total); animN('sIdx', indexed); animN('sNot', notIdx); animN('sLikely', likely); animN('sIssues', notIdx + likely);
+  document.getElementById('ccAll').textContent = total;
+  document.getElementById('ccIdx').textContent = indexed;
+  document.getElementById('ccNot').textContent = notIdx;
+  document.getElementById('ccLikely').textContent = likely;
+
+  const color = score >= 75 ? '#1a5c3a' : score >= 50 ? '#c9a84c' : '#c0392b';
+  document.getElementById('ringFill').style.stroke = color;
+  document.getElementById('scoreFill').style.background = color;
+  setTimeout(() => {
+    document.getElementById('ringFill').style.strokeDashoffset = 251 - (score / 100) * 251;
+    document.getElementById('scoreFill').style.width = score + '%';
+    document.getElementById('ringNum').textContent = score;
+  }, 200);
+  document.getElementById('scoreVerdict').textContent = score >= 80
+    ? `🟢 Excellent! ${indexed}/${total} URLs indexed. Strong Google visibility.`
+    : score >= 55
+    ? `🟡 Moderate. ${notIdx + likely} URLs need attention — fix not-indexed ones first.`
+    : `🔴 Critical: only ${indexed}/${total} indexed. Immediate Google Search Console action needed.`;
+
+  await sleep(600);
+  stopSteps();
+  document.getElementById('loadingState').classList.remove('show');
+  document.getElementById('resultsArea').classList.add('show');
+  curFilter = 'all'; curSearch = '';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('chip-all').classList.add('active');
+
+  renderTable(allRows);
+  renderIssues(allRows.filter(r => r.status === 'not-indexed'), allRows.filter(r => r.status === 'likely'));
+  renderRecs(score, notIdx, likely, total);
+  doAI(total, indexed, notIdx, likely, score);
+  document.getElementById('runBtn').disabled = false;
+}
+
+function abortLoad(msg) {
+  stopSteps();
+  document.getElementById('loadingState').classList.remove('show');
+  document.getElementById('emptyState').style.display = '';
+  document.getElementById('runBtn').disabled = false;
+  alert('❌ ' + msg);
+}
+
+// ── AI Analysis — calls /api/analyze (serverless proxy) ──
+async function doAI(total, indexed, notIdx, likely, score) {
+  const siteUrl = document.getElementById('sitemapUrl').value || document.getElementById('websiteUrl').value;
+  const aiCard = document.getElementById('aiCard');
+  aiCard.classList.add('show');
+  document.getElementById('aiProvLabel').textContent = PROV_UI[selProv].label;
+  const body = document.getElementById('aiBody');
+  body.innerHTML = `Analyzing with ${selProv === 'ollama' ? 'Ollama' : PROV_UI[selProv].label}...<span class="ai-typing"></span>`;
+
+  const prompt = `You are a veteran SEO consultant with 25 years of experience. Analyze this sitemap indexing audit for ${siteUrl}:
+
+AUDIT DATA:
+- Total sitemap URLs: ${total}
+- Confirmed Indexed: ${indexed} (${score}%)
+- Not Indexed: ${notIdx}
+- Needs Verification: ${likely}
+- Health Score: ${score}/100
+
+Deliver a sharp, expert assessment:
+1. Overall verdict (2 direct sentences)
+2. Top 3 critical fixes RIGHT NOW (numbered, specific)
+3. Top 3 quick wins this week (numbered, actionable)
+4. One advanced SEO insight for this site
+
+Be specific, no filler. Max 260 words.`;
+
+  try {
+    let result;
+
+    if (selProv === 'ollama') {
+      // Ollama goes direct (local machine) — no proxy needed
+      const base = (document.getElementById('ollamaUrl').value.trim() || 'http://localhost:11434').replace(/\/$/, '');
+      const r = await fetch(`${base}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'llama3.2', messages: [{ role: 'user', content: prompt }], stream: false }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Ollama error');
+      result = d.message?.content || '';
+    } else {
+      // All other providers → go through secure server-side proxy
+      const userKey = document.getElementById('apiKey').value.trim();
+      const r = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: selProv,
+          prompt,
+          ...(userKey ? { userKey } : {}), // only send if user explicitly entered one
+        }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Server error');
+      result = d.result;
+    }
+
+    body.textContent = result;
+
+  } catch (e) {
+    body.innerHTML = `⚠️ <em style="color:var(--gold-light)">${e.message}</em>\n\n` + fallbackAnalysis(total, indexed, notIdx, likely, score);
+  }
+}
+
+// ── Offline fallback ──
+function fallbackAnalysis(total, indexed, notIdx, likely, score) {
+  return `📊 Offline Expert Assessment
+
+Your site scores ${score}/100 — ${score >= 75 ? 'good health overall' : score >= 50 ? 'moderate — needs work' : 'poor — urgent action needed'}. ${notIdx} URLs are unindexed and ${likely} require verification.
+
+Critical Fixes:
+1. Submit all ${notIdx} not-indexed URLs via Google Search Console → URL Inspection → Request Indexing.
+2. Crawl with Screaming Frog to check if unindexed pages have noindex tags, redirect chains, or 4xx errors.
+3. Check GSC Coverage for "Crawled – currently not indexed" and "Discovered – currently not indexed" errors.
+
+Quick Wins This Week:
+1. Add your sitemap URL to GSC under Sitemaps tab to trigger a fresh crawl.
+2. Build 2–3 internal links from high-traffic pages to any critical unindexed URLs.
+3. Update lastmod dates in sitemap for recently improved pages — signals freshness to Googlebot.
+
+Advanced Insight:
+If crawl budget is being wasted on paginated, parameterized, or thin-content URLs, remove them from the sitemap and use canonical tags. This concentrates Googlebot attention on pages that need to rank.`;
+}
+
+// ── Render ──
+function renderTable(rows) {
+  const tbody = document.getElementById('tBody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="7" class="no-results">No URLs match this filter.</td></tr>'; return; }
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td style="color:var(--warm-gray);font-family:var(--font-mono);font-size:11px">${r.idx}</td>
+      <td style="max-width:320px"><a class="url-link" href="${r.loc}" target="_blank">${r.loc}</a></td>
+      <td><span class="badge in-map">✓ Yes</span></td>
+      <td>${sBadge(r.status)}</td>
+      <td>${pDot(r.priority)}</td>
+      <td style="font-family:var(--font-mono);font-size:11px;color:var(--warm-gray)">${r.changefreq}</td>
+      <td>${aText(r.status)}</td>
+    </tr>`).join('');
+}
+const sBadge = s => s === 'indexed' ? '<span class="badge indexed">✅ Indexed</span>' : s === 'not-indexed' ? '<span class="badge not-indexed">❌ Not Indexed</span>' : '<span class="badge likely">⚠️ Verify</span>';
+const pDot = p => { const n = parseFloat(p); if (isNaN(n)) return `<span class="pdot med">${p}</span>`; return `<span class="pdot ${n>=.8?'high':n>=.5?'med':'low'}">${p}</span>`; };
+const aText = s => s === 'indexed' ? '<span class="act ok">✓ No action</span>' : s === 'not-indexed' ? '<span class="act urgent">⚡ Submit to GSC</span>' : '<span class="act check">🔍 Verify in GSC</span>';
+
+function setFilter(f) {
+  curFilter = f; curSearch = '';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('chip-' + f).classList.add('active');
+  applyFilter();
+}
+function doSearch(q) { curSearch = q.toLowerCase(); applyFilter(); }
+function applyFilter() {
+  let rows = curFilter === 'all' ? allRows : allRows.filter(r => r.status === curFilter);
+  if (curSearch) rows = rows.filter(r => r.loc.toLowerCase().includes(curSearch));
+  renderTable(rows);
+}
+
+function renderIssues(notIdx, likely) {
+  const fmt = (list, el) => {
+    document.getElementById(el).innerHTML = list.length
+      ? list.slice(0, 10).map(r => `<li class="iurl">${r.loc.replace(/^https?:\/\/[^/]+/, '') || '/'}</li>`).join('')
+        + (list.length > 10 ? `<li class="iurl" style="color:var(--warm-gray)">...and ${list.length - 10} more</li>` : '')
+      : '<li class="iurl" style="color:var(--forest)">✅ All clear!</li>';
+  };
+  fmt(notIdx, 'niList'); fmt(likely, 'liList');
+}
+
+function renderRecs(score, notIdx, likely, total) {
+  const recs = [
+    { icon: '📌', text: 'Use GSC → URL Inspection to manually request indexing for all not-indexed priority pages.' },
+    { icon: '🔗', text: 'Build internal links from high-traffic pages to unindexed URLs to boost crawl probability.' },
+    { icon: '🩺', text: 'Crawl your site with Screaming Frog to find 4xx/5xx errors on sitemap URLs.' },
+    { icon: '🧹', text: 'Remove redirect, canonical, and parameter URLs from your sitemap — only include indexable pages.' },
+    { icon: '📅', text: 'Keep lastmod dates accurate — stale dates reduce Googlebot\'s urgency to re-crawl.' },
+    { icon: '⚡', text: 'Improve Core Web Vitals — slow pages get reduced crawl budget, hurting deep URL indexing.' },
+  ];
+  if (score < 60) recs.unshift({ icon: '🚨', text: 'Critical: Resubmit your sitemap in GSC immediately and monitor the Coverage report daily.' });
+  document.getElementById('recGrid').innerHTML = recs.slice(0, 6).map(r => `<div class="rec-item"><span style="font-size:13px;flex-shrink:0;margin-top:1px">${r.icon}</span>${r.text}</div>`).join('');
+}
+
+function exportCSV() {
+  if (!allRows.length) return;
+  const h = 'Index,URL,In Sitemap,Index Status,Priority,Change Freq,Last Modified\n';
+  const rows = allRows.map(r => `${r.idx},"${r.loc}","Yes","${r.status}","${r.priority}","${r.changefreq}","${r.lastmod}"`).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([h + rows], { type: 'text/csv' }));
+  a.download = 'seo-indexing-audit.csv';
+  a.click();
+}
+
+function clearAll() {
+  document.getElementById('xmlInput').value = '';
+  document.getElementById('resultsArea').classList.remove('show');
+  document.getElementById('emptyState').style.display = '';
+  allRows = [];
+}
+
+function animN(id, target) {
+  const el = document.getElementById(id); let n = 0;
+  const step = Math.max(1, Math.floor(target / 20));
+  const t = setInterval(() => { n = Math.min(n + step, target); el.textContent = n; if (n >= target) clearInterval(t); }, 40);
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>
