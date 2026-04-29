@@ -1,13 +1,12 @@
 /**
  * /api/check-sitemap
  * Next.js API Route — server-side sitemap audit
- * Runs entirely on Vercel serverless. No CORS issues.
+ * No CORS issues. Runs entirely on Vercel serverless.
  */
 
 import { runSitemapAudit } from '../../lib/sitemapEngine';
 
 export default async function handler(req, res) {
-  // CORS headers (for public tool)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -33,10 +32,11 @@ export default async function handler(req, res) {
   }
 }
 
-// Increase timeout for slow sitemaps
 export const config = {
   api: {
     responseLimit: false,
-    bodyParser: { sizeLimit: '1mb' },
+    bodyParser: {
+      sizeLimit: '1mb',
+    },
   },
 };
